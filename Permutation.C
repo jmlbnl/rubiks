@@ -483,3 +483,101 @@ bool incrementIdx(int *idx, int depth, int nbases) {
     }
     return false;
 }
+
+int Permutation::getCycleType(std::vector<int> &cyc) {
+    int type = 0;
+
+    for(auto x : cyc) {
+	int t=-1;
+	if(x >= 100) t = 3;
+	else if(x>=10) t = 2;
+
+	if (type == 0) type = t;
+	else if (type != t) type = -1;
+    }
+
+    return type;
+}   
+    
+int Permutation::getNParity(int N) {
+    int ncycles = 0;
+    int nsymbols = 0;
+    int nswaps = 0;
+    for(auto x : cycles) {
+	int type = getCycleType(x);
+	assert(type != -1);
+	if(type != N) continue;
+	
+	nswaps += x.size()-1;
+    }
+
+    //printf("%d = %d\n", nswaps, nswaps/N);
+    
+    int p = (nswaps)%2;
+}
+
+// 1. rename all symbols to sorted versions
+// 2. cut cycles short at first repeat
+// 3. remove repeated cycles
+// 4. put into standard form...
+Permutation Permutation::reduceToDegenerate() {
+    std::vector<std::vector<int>> dcycles1;
+
+    // rename the symbols to sorted versions...
+    for(auto x : cycles) {
+	std::vector<int> dcyc;
+	for(auto y : x) {
+	    std::vector<int> digits;
+	    digits.push_back(y/100);
+	    digits.push_back((y%100)/10);
+	    digits.push_back(y%10);
+	    std::sort(digits.begin(), digits.end());
+	    int nsymbol = digits[0] * 100 + digits[1] * 10 + digits[2];
+	    
+	    dcyc.push_back(nsymbol);
+	}
+	dcycles1.push_back(dcyc);
+    }
+
+    // cut off after first repeat
+    std::vector<std::vector<int>> dcycles2;
+    for(auto x : dcycles1) {
+	std::vector<int> dcyc;
+	int first = 0;
+	for(auto y : x) {
+	    if(first == 0) first = y;
+	    else if (first == y) break;
+
+	    dcyc.push_back(y);
+	}
+	if(dcyc.size() > 1) {
+	    dcycles2.push_back(dcyc);
+	}
+    }
+
+    // rotate to smallest
+    for(auto &x : dcycles2) {
+	auto it = std::min_element(x.begin(), x.end());
+	std::rotate(x.begin(), it, x.end());
+    }
+
+    // sort the vectors...
+    std::sort(dcycles2.begin(), dcycles2.end());
+
+    std::vector<std::vector<int>> dcycles3;
+    int j=-1;
+    for(int i=0;i<dcycles2.size();i++) {
+	std::vector<int> &x = dcycles2[i];
+
+	if(j >= 0) {
+	    if(dcycles2[i] == dcycles3[j]) continue;
+	}
+
+	dcycles3.push_back(dcycles2[i]);
+	j++;
+    }
+
+    Permutation np(dcycles3);
+    return np;
+}
+

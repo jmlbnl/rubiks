@@ -70,6 +70,10 @@ class Permutation {
     int nswaps();
   
     int getSourcePosition(int x);
+
+    int getCycleType(std::vector<int> &x);
+    int getNParity(int N);
+    Permutation reduceToDegenerate();
  private:
     std::vector<int> readSingleCycle(std::string cycle_string);
 };

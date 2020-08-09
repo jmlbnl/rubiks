@@ -96,29 +96,59 @@ int main(int argc, char *argv[]) {
 	}
 	printf("\n");
     }
+    
+    AR reflect("(326 514)(32 51)(324 516)(36 54)(34 56)(316 524)(31 52)(314 526)(623 415)(63 45)(613 425)(62 41)(61 42)(625 413)(65 43)(615 423)(136 245)(13 25)(134 256)(16 24)(14 26)(156 234)(15 23)(145 236)");
+    
+    AR spin_l("(136 623 234 413)(13 63 23 43)(16 62 24 41)(156 625 245 415)(15 65 25 45)(145 615 256 425)(14 61 26 42)(134 613 236 423)(516 526 524 514)(316 326 324 314)(36 32 34 31)(56 52 54 51)");
+    
+    AR spin_d("(136 516 256 326)(156 526 236 316)(314 145 524 234)(324 134 514 245)(36 16 56 26)(32 13 51 25)(34 14 54 24)(31 15 52 23)(61 65 62 63)(615 625 623 613)(413 415 425 423)(41 45 42 43)");
+  
+    std::vector<AR> symBase;
+    std::vector<char> symBaseLabels;
 
-    for(int i=1;i<48;i++) {
-	AR vec = baseVec[i][1] * baseVec[i][3] * baseVec[i][5];
-	printf("%c%c%c:%s\n",baseVecLabels[i][5], baseVecLabels[i][3], baseVecLabels[i][1], vec.dump2CStr().c_str());
+    
+    symBase.push_back(reflect);   symBaseLabels.push_back('r');
+    symBase.push_back(spin_l);    symBaseLabels.push_back('l');
+    symBase.push_back(spin_d);    symBaseLabels.push_back('d');
 
-	fflush(stdout);
-	
-	std::map<AR, ElementDescriptor> result;
-	//vec.searchForMe(baseVec[0],
-	//baseVecLabels[0],
-	//	    result);
+    AR x;
+    std::map<ArrayRep, ElementDescriptor> SVec;
 
-	AR conjugate = baseVec[0][1] * baseVec[0][3] * baseVec[0][5];
-	vec.searchForConjigisor(10,
-				conjugate,
-				baseVec[i],
-				baseVecLabels[i],
-				result);
+    x.getGeneratedGroup(symBase, symBaseLabels, SVec);
+    int symIdx = 0;
+    for(auto p : SVec) {
+	symIdx++;
+	AR perm = p.first;
+	ElementDescriptor ed = p.second;
+	printf("SYM: %d %s %s\n", symIdx, ed.name.c_str(), perm.dump2CStr().c_str());
+    }
 
-	for(auto p : result) {
-	    AR perm = p.first;
-	    ElementDescriptor ed = p.second;
-	    printf("  conjigizor: %s:%s\n",ed.name.c_str(), perm.dump2CStr().c_str());
+
+    
+    std::vector<AR> base = baseVec[0];
+    std::vector<char> baseLabels = baseVecLabels[0];
+
+    symIdx = 0;
+    for(auto p : SVec) {
+	symIdx++;
+	AR S = p.first;
+	ElementDescriptor ed = p.second;
+	printf("REP: ");
+	for(int i=0;i<base.size();i++) {
+	    AR x = (-S) * base[i] * S;
+
+	    int cidx=-1;
+	    for(int j=0;j<base.size();j++) {
+		if(x == base[j]) {
+		    cidx = j;
+		    break;
+		}
+	    }
+
+	    assert(cidx != -1);
+
+	    printf("%c == %c : ", baseLabels[i], baseLabels[cidx]);
 	}
+	printf("%d\n", symIdx);
     }
 }
