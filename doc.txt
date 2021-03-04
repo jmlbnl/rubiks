@@ -1,0 +1,30 @@
+generateDeep.bin -- 9 deep full cube twists as background (48x symmetry suppressed)
+                 -- calculated via generateDeep.C
+		 
+cornerstore.bin  -- full corner solutions.  Calculated from 2x2 ascii solutions
+                 -- not symmetry suppressed
+sidestore1.bin   -- 16,13,14,15,45,43   wildcarded solutions with these cubies 
+sidestore2.bin   -- 24,23,25,26,63,56   wildcarded solutions with these cubies
+                 -- not symmetry suppressed
+		 -- created with generateManhatten.C in ~1/2 hour
+
+Next do build heuristicCount(AR x) functions!
+
+// Libraries
+ArrayRep         -- The array based representation of the cube
+Permutation      -- The string based representation of the cube
+PermutationMap   -- Maps permutation labels to cube indexes
+MinRep           -- A minimum representation
+heuristic        -- Manhatten heuristics for estimated number of cubes
+
+// Programs
+full.C                 -- Some test code.
+generateDeep.C         --
+generateManhatten.C    -- builds the sidestore.bin files
+getSymmetry.C          -- 
+solve.C
+testPermutationOrder.C -- failed test to build geometric permutation order
+test.C                 -- tries to solve using heuristics
+
+
+
