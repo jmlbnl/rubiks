@@ -12,44 +12,44 @@ PermutationMap::PermutationMap(int n, Face *array) {
 	
 	idx2label.insert({ idx, lab });
 	label2idx.insert({ lab, idx });
-
+	
 	if(lab > 100) {
-	    c_idx2label.insert({ idx, lab });
-	    c_label2idx.insert({ lab, idx });
+	  c_idx2label.insert({ idx, lab });
+	  c_label2idx.insert({ lab, idx });
 	}
 	else if (lab > 10) {
-	    s_idx2label.insert({ idx, lab });
-	    s_label2idx.insert({ lab, idx });
+	  s_idx2label.insert({ idx, lab });
+	  s_label2idx.insert({ lab, idx });
 	}
     }
-
+    
     face_opposites.insert({{1,2}, {2,1}, {3,5}, {4,6}, {5,3}, {6,4}});
     c_label_clockwise.insert({
-	    {134,314},{314,413},{413,134},
-				    {145,415},{415,514},{514,145},
-							    {156,516},{516,615},{615,156},
-										    {136,613},{613,316},{316,136},
-													    {234,423},{423,324},{324,234},
-																    {236,326},{326,623},{623,236},
-																			    {256,625},{625,526},{526,256},
-																						    {245,524},{524,425},{425,245}
-	});
-
+			      {134,314},{314,413},{413,134},
+			      {145,415},{415,514},{514,145},
+			      {156,516},{516,615},{615,156},
+			      {136,613},{613,316},{316,136},
+			      {234,423},{423,324},{324,234},
+			      {236,326},{326,623},{623,236},
+			      {256,625},{625,526},{526,256},
+			      {245,524},{524,425},{425,245}
+      });
+    
     s_label_opposites.insert({
-	    {13,31},{31,13},
-			{14,41},{41,14},
-				    {15,51},{51,15},
-						{16,61},{61,16},
-							    {23,32},{32,23},
-									{24,42},{42,24},
-										    {25,52},{52,25},
-												{26,62},{62,26},
-													    {34,43},{43,34},
-															{36,63},{63,36},
-																    {56,65},{65,56},
-																		{45,54},{54,45}
-	});
-
+			      {13,31},{31,13},
+			      {14,41},{41,14},
+			      {15,51},{51,15},
+			      {16,61},{61,16},
+			      {23,32},{32,23},
+			      {24,42},{42,24},
+			      {25,52},{52,25},
+			      {26,62},{62,26},
+			      {34,43},{43,34},
+			      {36,63},{63,36},
+			      {56,65},{65,56},
+			      {45,54},{54,45}
+      });
+    
     // printf("here\n");
     if(n == 48) {
 	// Corner Cubies
@@ -145,9 +145,9 @@ int PermutationMap::getCornerOrientation(int pos, int face) {
 	o_of_face++;
     }
 
-    int o = ((o_of_face - o_of_pos + 3) % 3);
+    int o = ((3 + o_of_face - o_of_pos + 3) % 3);
     //printf("corner orientation:  %d @ %d = %d  {%d %d}\n", oface, opos, o, o_of_pos, o_of_face);
-    return ((o_of_face - o_of_pos) % 3); 
+    return ((3 + o_of_face - o_of_pos) % 3); 
 }
 
 int PermutationMap::getSideOrientation(int pos, int face) {

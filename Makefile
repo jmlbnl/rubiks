@@ -7,7 +7,7 @@ OBJS = Permutation.o PermutationMap.o ArrayRep.o heuristic.o
 
 LDLIBS += -lm -lglut -lGL -lGLU
 
-EXE = full getSymmetry test generateDeep generateManhatten solve testPermutationOrder
+EXE = full getSymmetry test generateDeep generateManhatten solve testPermutationOrder solveLame countTwoByTwo
 
 all: ${EXE}
 
@@ -24,6 +24,10 @@ generateManhatten: ${OBJS}
 solve: ${OBJS}
 
 testPermutationOrder: ${OBJS}
+
+solveLame: ${OBJS}
+
+countTwoByTwo: ${OBJS}
 
 clean:
 	rm *.o *~ ${EXE}

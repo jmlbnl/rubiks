@@ -56,3 +56,4 @@ class PermutationMap {
 };
 
 extern PermutationMap RubiksMap;
+extern PermutationMap CubeMapCorners;

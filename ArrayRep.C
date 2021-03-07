@@ -113,7 +113,8 @@ CornerStore::CornerStore(ArrayRep &x, u_int64_t cnt) {
 
 // cnt is the 16 least significant bits...
 void CornerStore::set(ArrayRep &x, u_int64_t cnt) {
-    data = 0;
+  data = 0;
+  
     for(int i=0;i<8;i++) {
 	int locIdx = pm.cornercubies.ccIdx2Idx[i];           // sampling idx
 	int faceIdx = x.data[locIdx];                        // faceIdx @ samplingIdx
@@ -171,6 +172,93 @@ ArrayRep CornerStore::build() {
     return x;
 }
 
+
+SideStore SideStore::operator* (const SideStore &b) const {
+    SideStore r(0);
+    for(int i=0;i<12;i++) {
+	u_int64_t datai_ccidx = (data >> (4 + i*4)) & 0xfll;             // datai
+	u_int64_t datai_orient = (data >> (4 + 48 + i)) & 0x1ll;
+	
+	u_int64_t bdata_ccidx = (b.data >> (4 + datai_ccidx*4)) & 0xfll;
+	u_int64_t bdata_orient = (b.data >> (4 + 48 + datai_ccidx)) & 0x1ll;
+	
+	//printf("%d data[i] =%ld    b.data[data[i] = %ld\n", i, datai_ccidx, bdata_ccidx);
+	u_int64_t new_orient = (1 + datai_orient + bdata_orient) % 2;
+	r.data |= bdata_ccidx << (4 + i*4);
+	r.data |= new_orient << (4 + 48 + i);
+    }
+    
+    //for(int i=0;i<48;i++) {
+    //   r.data[i] = b.data[data[i]];
+    //}
+    return r;
+}
+
+CornerStore CornerStore::operator* (const CornerStore &b) const {
+    CornerStore r(0);
+    for(int i=0;i<8;i++) {
+	u_int64_t datai_ccidx = (data >> (16 + i*3)) & 0x7ll;             // datai
+	u_int64_t datai_orient = (data >> (16 + 24 + i*2)) & 0x3ll;
+	
+	u_int64_t bdata_ccidx = (b.data >> (16 + datai_ccidx*3)) & 0x7ll;
+	u_int64_t bdata_orient = (b.data >> (16 + 24 + datai_ccidx*2)) & 0x3ll;
+	
+	//printf("%d data[i] =%ld    b.data[data[i] = %ld\n", i, datai_ccidx, bdata_ccidx);
+	u_int64_t new_orient = (3 - datai_orient + bdata_orient) % 3;
+	r.data |= bdata_ccidx << (16 + i*3);
+	r.data |= new_orient << (16 + 24 + i*2);
+    }
+    
+    //for(int i=0;i<48;i++) {
+    //   r.data[i] = b.data[data[i]];
+    //}
+    return r;
+}
+
+SideStore SideStore::operator-() const {
+    SideStore r(0);
+    for(u_int64_t i=0;i<12;i++) {
+	u_int64_t datai_ccidx = (data >> (4 + i*4)) & 0xfll;      
+	u_int64_t datai_orient = (data >> (4 + 48 + i)) & 0x1ll;
+	
+	//printf("%ld %ld %ld\n", i, datai_ccidx, datai_orient);
+	datai_orient = (datai_orient) % 2;
+	r.data |= i << (4 + datai_ccidx*4);
+	r.data |= datai_orient << (4 + 48 + datai_ccidx);
+    }
+    
+    return r;
+}
+
+CornerStore CornerStore::operator-() const {
+    CornerStore r(0);
+    for(u_int64_t i=0;i<8;i++) {
+	u_int64_t datai_ccidx = (data >> (16 + i*3)) & 0x7ll;      
+	u_int64_t datai_orient = (data >> (16 + 24 + i*2)) & 0x3ll;
+	
+	//printf("%ld %ld %ld\n", i, datai_ccidx, datai_orient);
+	datai_orient = (3 + datai_orient) % 3;
+	r.data |= i << (16 + datai_ccidx*3);
+	r.data |= datai_orient << (16 + 24 + datai_ccidx*2);
+    }
+    
+    return r;
+}
+
+std::string CornerStore::dump2CStr() {
+  ArrayRep x = build();
+  return x.dump2CStr();
+}
+
+std::string SideStore::dump2CStr() {
+  ArrayRep x = build();
+  return x.dump2CStr();
+}
+
+std::string SideStore::dump2DStr() {
+  ArrayRep x = build();
+  return x.dump2DStr();
+}
 
 int CornerStore::getCount() {
     return (int)(data & 0xffffll);

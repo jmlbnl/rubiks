@@ -12,7 +12,7 @@ class ArrayRepCnt {
 
 class Heuristic {
 
- private:
+ public:
     void loadCubes(std::vector<ArrayRepCnt> &cubes);
     void loadSideStore(const char *fn, std::vector<SideStore> &cornerStore);
     void loadCornerStore(std::vector<CornerStore> &cornerStore);
@@ -26,7 +26,7 @@ class Heuristic {
     Heuristic() {};
 
     void init();
-
+  int CornerTurnsToSolve(ArrayRep &x);
     int Manhatten(ArrayRep &x);
     //int BackManhatten(const ArrayRep &x);
 };

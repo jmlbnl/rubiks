@@ -28,7 +28,7 @@ class SideStore {
     
     u_int64_t data;
 
-    SideStore() {};
+    SideStore() { data = 0xfffba98765432100; };
     SideStore(u_int64_t data);
     SideStore(ArrayRep &x, u_int64_t cnt);
     
@@ -39,6 +39,11 @@ class SideStore {
     bool operator>(const SideStore &b) const;
     bool operator==(const SideStore &b) const;
     bool operator!=(const SideStore &b) const;
+    SideStore operator*(const SideStore &b) const;
+    SideStore operator-() const;
+
+    std::string dump2CStr();
+    std::string dump2DStr();
 };
 
 // No wildcard capability because it isn't needed!
@@ -53,7 +58,7 @@ class CornerStore {
     
     u_int64_t data;
 
-    CornerStore() {};
+    CornerStore() {  data = 0xfac6880000ll; };
     CornerStore(u_int64_t data);
     CornerStore(ArrayRep &x, u_int64_t cnt);
     
@@ -64,6 +69,10 @@ class CornerStore {
     bool operator>(const CornerStore &b) const;
     bool operator==(const CornerStore &b) const;
     bool operator!=(const CornerStore &b) const;
+    CornerStore operator*(const CornerStore &b) const;
+    CornerStore operator-() const;
+
+    std::string dump2CStr();
 };
 
 // wildcard has face_position_idx == 0xff

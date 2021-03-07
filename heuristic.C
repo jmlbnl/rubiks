@@ -12,6 +12,12 @@ void Heuristic::init() {
     loadSideStore("sidestore2.bin", sideStoreBack);
 }
 
+int Heuristic::CornerTurnsToSolve(ArrayRep &x) {
+  CornerStore cs(x, 0);
+  auto csit = std::lower_bound(cornerStore.begin(), cornerStore.end(), cs);
+  return (*csit).getCount();
+}
+
 int Heuristic::Manhatten(ArrayRep &x) {
     ArrayRep front = x;
     ArrayRep back = x;
