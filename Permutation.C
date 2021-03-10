@@ -514,6 +514,7 @@ int Permutation::getNParity(int N) {
     //printf("%d = %d\n", nswaps, nswaps/N);
     
     int p = (nswaps)%2;
+    return p;
 }
 
 // 1. rename all symbols to sorted versions

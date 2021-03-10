@@ -32,8 +32,9 @@ class Permutation {
     // predefined unrotated corner transformations
     static Permutation UCf, UCx, UCr, UCl, UCt, UCb;
     static Permutation UCF, UCX, UCR, UCL, UCT, UCB;
-        
-    Permutation(std::string cycle_string, std::string nm="");
+
+    
+    Permutation(std::string cycle_string="", std::string nm="");
  
     // Note name is assembled backwards!   P("l") * P("r") ==> "rl"
     Permutation operator* (Permutation B);

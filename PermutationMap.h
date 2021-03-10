@@ -55,5 +55,6 @@ class PermutationMap {
     void dump();
 };
 
+extern Face DisplayFaces[54];
 extern PermutationMap RubiksMap;
 extern PermutationMap CubeMapCorners;
