@@ -102,7 +102,7 @@ Permutation::Permutation(std::vector<std::vector<int>> x, std::string nm) {
 }
 
 void Permutation::sortedorder(std::vector<std::vector<int>> &vec) {
-    std::sort(vec.begin(), vec.end(), [](std::vector<int> &a, std::vector<int> &b) { return a[0] < b[0]; });
+    std::sort(vec.begin(), vec.end(), [](const std::vector<int> &a, const std::vector<int> &b) { return a[0] < b[0]; });
 }
 
 std::vector<int> Permutation::spinToMin(std::vector<int> cyc) {

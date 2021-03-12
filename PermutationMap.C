@@ -5,7 +5,7 @@ PermutationMap::PermutationMap(int n, Face *array) {
     for(int i=0;i<n;i++) {
 	faces.push_back(array[i]);
     }
-    std::sort(faces.begin(), faces.end(), [](Face &a, Face &b) { return (a.id < b.id); });
+    std::sort(faces.begin(), faces.end(), [](const Face &a, const Face &b) { return (a.id < b.id); });
     
     for(int idx=0;idx<n;idx++) {
 	int lab = faces[idx].id;
