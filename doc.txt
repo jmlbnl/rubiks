@@ -26,5 +26,5 @@ solve.C
 testPermutationOrder.C -- failed test to build geometric permutation order
 test.C                 -- tries to solve using heuristics
 
-
-
+display.C		-- displays the cubes
+getXClipboard.C		-- library for grabbing the clipboard
