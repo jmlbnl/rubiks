@@ -3,9 +3,9 @@ CXX = g++
 CPP = g++
 CC = g++
 
-OBJS = Permutation.o PermutationMap.o ArrayRep.o heuristic.o 
+OBJS = Permutation.o PermutationMap.o ArrayRep.o heuristic.o getXClipboard.o
 
-LDLIBS += -lm -lglut -lGL -lGLU
+LDLIBS += -lm -lglut -lGL -lGLU -lX11
 
 EXE = display full getSymmetry test generateDeep generateManhatten solve testPermutationOrder solveLame countTwoByTwo
 

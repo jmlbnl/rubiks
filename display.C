@@ -11,13 +11,17 @@
 #include <GL/freeglut.h>
 #include <math.h>
 #include <stdio.h>
-#include "PermutationMap.h"
+#include "PermutationMap.h" 
 #include "Permutation.h"
+
+char currentLine[1024];
+int currentLinePos=0;
+
+int mode=1;   // 0 = enter twists, 1 = enter data
 
 
 // Rotate X
 double rX=30;
-// Rotate Y
 double rY=30;
 
 /*
@@ -182,121 +186,114 @@ void drawCube()
     for(int cube = 0;cube<24;cube++) {
 	for(int i=0;i<9*6;i++) drawFace(cube, i, (-6 + (cube%6)*2), -3 + (cube/6) * 2);
     }
+
+    char str[1124];
+    sprintf(str, "%s\ncube %d: %s \n %s",
+	    ((mode == 0) ? "cmd mode" : "twist mode"),
+	    CurrentPerm,
+	    PERMs[CurrentPerm].dump2Str().c_str(),
+	    currentLine);
     
-    drawText("hi there\n does the newline work?\n\nPerhaps?");
+    drawText(str);
     
     glFlush();
     glutSwapBuffers();
 }
 
 void mykeys(unsigned char key, int x, int y) {
-    static int d1 = -1;
-    static int d2 = -1;
-    printf("key = %d %d %d\n", key,x,y);
-    //PERM = PERM_real;
-    
-    // if(key == 'C') {
-    // 	current_index_cycle++;
-    // 	current_index_cycle %= transtable.nFacePermutations();
-    // 	PERM = transtable.getFacePermutation(current_index_cycle) * PERM;
-    // }
-    // else if (key == 'c') {
-    // 	if(current_index_cycle == 0) current_index_cycle = transtable.nFacePermutations();
-    // 	current_index_cycle--;
-    // 	PERM = transtable.getFacePermutation(current_index_cycle) * PERM;
-    // }
-    // else {
-    switch(key) {
-    case 'f':
-	PERMs[CurrentPerm] = (Permutation::Pf * PERMs[CurrentPerm]);
-	break;
-    case 'F':
-	PERMs[CurrentPerm] = -Permutation::Pf * PERMs[CurrentPerm];
-	break;
-    case 'x':
-	PERMs[CurrentPerm] = Permutation::Px * PERMs[CurrentPerm];
-	break;
-    case 'X':
-	PERMs[CurrentPerm] = -Permutation::Px * PERMs[CurrentPerm];
-	break;
-    case 'r':
-	PERMs[CurrentPerm] = Permutation::Pr * PERMs[CurrentPerm];
-	break;
-    case 'R':
-	PERMs[CurrentPerm] = -Permutation::Pr * PERMs[CurrentPerm];
-	break;
-    case 'l':
-	PERMs[CurrentPerm] = Permutation::Pl * PERMs[CurrentPerm];
-	break;
-    case 'L':
-	PERMs[CurrentPerm] = -Permutation::Pl * PERMs[CurrentPerm];
-	break;
-    case 't':
-	PERMs[CurrentPerm] = Permutation::Pt * PERMs[CurrentPerm];
-	break;
-    case 'T':
-	PERMs[CurrentPerm] = -Permutation::Pt * PERMs[CurrentPerm];
-	break;
-    case 'b':
-	PERMs[CurrentPerm] = Permutation::Pb * PERMs[CurrentPerm];
-	break;
-    case 'B':
-	PERMs[CurrentPerm] = -Permutation::Pb * PERMs[CurrentPerm];
-	break;
-	
-    case 'I':
+    printf("key = %d.  Mode=%d currentLine=(%s)\n",key,mode, currentLine);
+
+    if (key == '\e')
 	{
-	    Permutation x("","I");
-	    current_index_cycle = 0;
-	    PERMs[CurrentPerm] = x;
-	    break;
+	    mode = (mode + 1) % 2;
+	    glutPostRedisplay();
+	    return;
+	} 
+   
+    if(mode == 0) {
+	if(key != '\r') {
+	    currentLine[currentLinePos++] = key;
+	    glutPostRedisplay();
+	    return;
 	}
 
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-    case '0':
-	{
-	    if(d1 == -1) d1 = key-'0';
-	    else if(d2 == -1) d2 = key-'0';
-	    else {
-		d1 = d2;
-		d2 = key -'0';
-	    }
-	    
-	    printf("d1 = %d d2 = %d\n", d1, d2);
+      
+	if(memcmp(currentLine, "use ", 4) == 0) {
+	    CurrentPerm = atoi(&currentLine[4]);
 	}
-	break;
-    case '\r':
-	{
-	    printf("return...\n");
-	    if(d1 == -1) d1 = 0;
-	    int x = 0;
-	    if(d2 == -1) x = d1;
-	    else {
-		x = d1 * 10 + d2 -1;
-	    }
-	    
-	    if(x >= 0 && x< 24)
-		CurrentPerm = x;
-	    
+	else if(memcmp(currentLine, "set ", 4) == 0) {
+	    Permutation p(&currentLine[4], "");
+	    printf("set p to %s\n", p.dump2Str().c_str());
+	    PERMs[CurrentPerm] = p;
 	}
-	break;
+	else if(memcmp(currentLine, "mul ", 4) == 0) {
+	    Permutation m(&currentLine[4], "");
+	    Permutation p = m * PERMs[CurrentPerm];
+	    PERMs[CurrentPerm] = p;
+	}
+
+	memset(currentLine, 0, sizeof(currentLine));
+	currentLinePos = 0;
+	glutPostRedisplay();
+	return;
     }
+    else {
+	switch(key) {
+	case 'f':
+	    PERMs[CurrentPerm] = (Permutation::Pf * PERMs[CurrentPerm]);
+	    break;
+	case 'F':
+	    PERMs[CurrentPerm] = -Permutation::Pf * PERMs[CurrentPerm];
+	    break;
+	case 'x':
+	    PERMs[CurrentPerm] = Permutation::Px * PERMs[CurrentPerm];
+	    break;
+	case 'X':
+	    PERMs[CurrentPerm] = -Permutation::Px * PERMs[CurrentPerm];
+	    break;
+	case 'r':
+	    PERMs[CurrentPerm] = Permutation::Pr * PERMs[CurrentPerm];
+	    break;
+	case 'R':
+	    PERMs[CurrentPerm] = -Permutation::Pr * PERMs[CurrentPerm];
+	    break;
+	case 'l':
+	    PERMs[CurrentPerm] = Permutation::Pl * PERMs[CurrentPerm];
+	    break;
+	case 'L':
+	    PERMs[CurrentPerm] = -Permutation::Pl * PERMs[CurrentPerm];
+	    break;
+	case 't':
+	    PERMs[CurrentPerm] = Permutation::Pt * PERMs[CurrentPerm];
+	    break;
+	case 'T':
+	    PERMs[CurrentPerm] = -Permutation::Pt * PERMs[CurrentPerm];
+	    break;
+	case 'b':
+	    PERMs[CurrentPerm] = Permutation::Pb * PERMs[CurrentPerm];
+	    break;
+	case 'B':
+	    PERMs[CurrentPerm] = -Permutation::Pb * PERMs[CurrentPerm];
+	    break;
+	case 'I':
+	case 'i':
+	    {
+		Permutation x("","I");
+		current_index_cycle = 0;
+		PERMs[CurrentPerm] = x;
+		break;
+	    }
+	}
     
-	//   }
-
-    printf("cycle idx: %d\n", current_index_cycle);
-    PERMs[CurrentPerm].reduceName();
-    PERMs[CurrentPerm].dump();
     
-    glutPostRedisplay();
+    
+	
+	// printf("cycle idx: %d\n", current_index_cycle);
+	// PERMs[CurrentPerm].reduceName();
+	// PERMs[CurrentPerm].dump();
+	
+	glutPostRedisplay();
+    }
 }
 
 void keyboard(int key, int x, int y)
@@ -320,6 +317,7 @@ void keyboard(int key, int x, int y)
         {
                 rX += 15;
         }
+
  
     //printf("key=%d x=%d y=%d\n", key, x, y);
 	
@@ -334,6 +332,7 @@ int main(int argc, char **argv)
 {
     //readTransTable("face_permutations.txt", index_cycles);
     CurrentPerm = 0;
+    memset(currentLine, 0, sizeof(currentLine));
     
     // Initialize GLUT and process user parameters
     glutInit(&argc, argv);
